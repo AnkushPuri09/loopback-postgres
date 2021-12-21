@@ -9,6 +9,8 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import { AuthenticationServiceComponent } from '@sourceloop/authentication-service';
+import { AuthorizationComponent } from 'loopback4-authorization';
 
 export {ApplicationConfig};
 
@@ -29,6 +31,8 @@ export class PostgresApiApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+    this.component(AuthenticationServiceComponent);
+    this.component(AuthorizationComponent);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here

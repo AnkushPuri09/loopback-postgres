@@ -19,6 +19,13 @@ import {
 } from '@loopback/rest';
 import {Roles} from '../models';
 import {RolesRepository} from '../repositories';
+import {authorize} from 'loopback4-authorization';
+import { OPERATION_SECURITY_SPEC } from '@sourceloop/core';
+import {
+  authenticate,
+  AuthenticationBindings,
+  STRATEGY,
+} from 'loopback4-authentication';
 
 export class RolesController {
   constructor(
@@ -58,18 +65,37 @@ export class RolesController {
     return this.rolesRepository.count(where);
   }
 
-  @get('/roles')
-  @response(200, {
-    description: 'Array of Roles model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Roles, {includeRelations: true}),
+  @authenticate(STRATEGY.BEARER ,{
+    passReqToCallback: true,
+  })
+  @authorize({permissions: ['abc']})
+  @get('/roles',{
+    security: OPERATION_SECURITY_SPEC,
+    responses:{
+      description: 'Array of Roles model instances',
+      security: OPERATION_SECURITY_SPEC,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Roles, {includeRelations: true}),
+          },
         },
       },
-    },
+    }
   })
+  // @response(200, {
+  //   description: 'Array of Roles model instances',
+  //   security: OPERATION_SECURITY_SPEC,
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Roles, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
   async find(
     @param.filter(Roles) filter?: Filter<Roles>,
   ): Promise<Roles[]> {

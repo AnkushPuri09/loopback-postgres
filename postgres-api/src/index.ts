@@ -1,7 +1,8 @@
+import { config } from '@loopback/context';
 import {ApplicationConfig, PostgresApiApplication} from './application';
 
 export * from './application';
-
+config();
 export async function main(options: ApplicationConfig = {}) {
   const app = new PostgresApiApplication(options);
   await app.boot();
